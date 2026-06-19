@@ -1,0 +1,75 @@
+# BEKE Cyberpunk "VOLT" Theme
+# Palette: volt green (energy) + electrolyte cyan + deep-space dark
+# Fonts:   Orbitron (headings/body) + Source Code Pro (code)
+
+[server]
+enableStaticServing = true
+
+# ---------------------------------------------------------------------------
+# Font faces — Orbitron (futuristic display) + Source Code Pro (terminal)
+# ---------------------------------------------------------------------------
+
+[[theme.fontFaces]]
+family = "Orbitron"
+url = "app/static/Orbitron-Regular.ttf"
+style = "normal"
+weight = 400
+
+[[theme.fontFaces]]
+family = "Orbitron"
+url = "app/static/Orbitron-Medium.ttf"
+style = "normal"
+weight = 500
+
+[[theme.fontFaces]]
+family = "Orbitron"
+url = "app/static/Orbitron-SemiBold.ttf"
+style = "normal"
+weight = 600
+
+[[theme.fontFaces]]
+family = "Orbitron"
+url = "app/static/Orbitron-Bold.ttf"
+style = "normal"
+weight = 700
+
+[[theme.fontFaces]]
+family = "Orbitron"
+url = "app/static/Orbitron-ExtraBold.ttf"
+style = "normal"
+weight = 800
+
+[[theme.fontFaces]]
+family = "SourceCodePro"
+url = "app/static/SourceCodePro-Regular.ttf"
+style = "normal"
+weight = 400
+
+[[theme.fontFaces]]
+family = "SourceCodePro"
+url = "app/static/SourceCodePro-Bold.ttf"
+style = "normal"
+weight = 700
+
+# ---------------------------------------------------------------------------
+# Theme — BEKE "VOLT" cyberpunk
+# ---------------------------------------------------------------------------
+
+[theme]
+primaryColor = "#00ff88"             # Volt green — energy / battery charge indicator
+backgroundColor = "#0a0e17"          # Deep space dark — night-flight cockpit
+secondaryBackgroundColor = "#111927" # Instrument panel — cards and sections
+textColor = "#c8d6e5"                # Cool silver — metallic, readable
+linkColor = "#00d4ff"                # Electrolyte cyan — HUD highlights
+borderColor = "#1e3a5f"              # Circuit-trace blue — subtle definition
+showWidgetBorder = true
+baseRadius = "0.2rem"                # Sharp angular — tactical HUD feel
+font = "Orbitron"                    # Futuristic display font
+headingFont = "Orbitron"             # Consistent sci-fi hierarchy
+codeFont = "SourceCodePro"           # Terminal monospace
+codeBackgroundColor = "#0d1520"      # Darker terminal background
+showSidebarBorder = true
+
+[theme.sidebar]
+backgroundColor = "#0d1520"          # Command panel — darker than main
+secondaryBackgroundColor = "#111927" # Instrument subsections

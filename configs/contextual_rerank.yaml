@@ -1,0 +1,105 @@
+# Winning RAG configuration — 3E: contextual chunks + hybrid BM25/dense + cross-encoder rerank
+# Validated on 5-file corpus / 30-question eval set (Phase 1, Days 4–6)
+# This file is the single source of truth for all pipeline parameters.
+
+# ---------------------------------------------------------------------------
+# Ingestion approach (Phase 2 decision)
+# ---------------------------------------------------------------------------
+ingestion:
+  docx: 1b        # native python-docx — fast, no API cost
+  pdf:  1b        # native pypdf — fast, no API cost
+  pptx: 1c        # vision-assisted — sends embedded images to gpt-4o-mini
+                  # rationale: 124 PPTX files (~2.7 GB) are graph-heavy;
+                  #            estimated cost ~$0.20–$2.00 for full corpus
+  vision_model: gpt-4o-mini   # multimodal model used for image descriptions
+
+# ---------------------------------------------------------------------------
+# Parsing (Phase 2 update)
+# ---------------------------------------------------------------------------
+parsing:
+  docx: 1b                              # native python-docx — fast, text + headings
+  pdf:  1b                              # native pypdf — fast, text + page structure
+  pptx: 1c                              # vision-assisted — gpt-4o-mini describes
+                                        # embedded images/charts in graph-heavy slides
+                                        # estimated cost: ~$0.20–$2.00 for 124 PPTX files
+
+# ---------------------------------------------------------------------------
+# Chunking
+# ---------------------------------------------------------------------------
+chunking:
+  strategy: recursive                   # LangChain RecursiveCharacterTextSplitter
+  chunk_size: 1000                      # characters per chunk
+  chunk_overlap: 150                    # overlap between consecutive chunks
+
+# ---------------------------------------------------------------------------
+# Contextual enrichment  (3E)
+# ---------------------------------------------------------------------------
+contextual:
+  enabled: true
+  llm: gpt-4o-mini                      # model used to generate situating sentences
+  vision_llm: gpt-4o-mini              # same model, used with image inputs for 1c parsing
+  temperature: 0
+  prefix_template: "Context: {context}\n---\n{chunk_text}"
+  cache_path: caches/contextual_cache.jsonl   # re-runs cost $0 for cached chunks
+
+# ---------------------------------------------------------------------------
+# Embedding
+# ---------------------------------------------------------------------------
+embedding:
+  model: BAAI/bge-base-en-v1.5          # 768-dim; outperforms MiniLM on scientific text
+  dimensions: 768
+  normalize: true                       # cosine similarity requires unit vectors
+  batch_size: 100
+
+# ---------------------------------------------------------------------------
+# Retrieval  (first stage)
+# ---------------------------------------------------------------------------
+retrieval:
+  strategy: hybrid                      # EnsembleRetriever: BM25 + dense vector
+  dense_weight: 0.5                     # weight for dense retriever; BM25 weight = 1 - dense_weight
+  bm25_weight: 0.5
+  fetch_k: 50                           # candidates fetched before reranking
+
+# ---------------------------------------------------------------------------
+# Reranking  (second stage)
+# ---------------------------------------------------------------------------
+reranking:
+  enabled: true
+  model: BAAI/bge-reranker-v2-m3        # cross-encoder, 568M params; ~0.5 s on CPU
+  top_n: 5                              # final chunks passed to the LLM generator
+  fetch_k: 50                           # must equal retrieval.fetch_k
+
+# ---------------------------------------------------------------------------
+# Generation
+# ---------------------------------------------------------------------------
+generation:
+  llm: gpt-4o-mini
+  temperature: 0
+  context_k: 5                          # top-k reranked chunks included in prompt
+
+# ---------------------------------------------------------------------------
+# Vector store
+# ---------------------------------------------------------------------------
+vectorstore:
+  local: pgvector                       # RDS Aurora PostgreSQL Serverless v2 (via SSH tunnel)
+  production: pgvector                  # RDS Aurora PostgreSQL Serverless v2 (Phase 2)
+  collection: beke_contextual           # langchain_pg_collection name
+  index_path: indices/chroma_contextual # kept for Phase 1 Chroma compatibility
+
+# ---------------------------------------------------------------------------
+# Eval results (Phase 1 — 30-question set, 5-file corpus)
+# ---------------------------------------------------------------------------
+eval:
+  retrieval:
+    Hit@1:   1.0000
+    Hit@5:   1.0000
+    Hit@10:  1.0000
+    MRR:     1.0000
+    nDCG@1:  1.0000
+    nDCG@5:  0.9791
+    nDCG@10: 0.9510
+  answer_quality:                       # RAGAS — 5-question subset
+    faithfulness:        0.9333
+    answer_relevancy:    0.9699
+    context_precision:   0.9283
+    context_recall:      0.8000

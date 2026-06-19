@@ -1,0 +1,38 @@
+# Virtual env + IDE
+.venv/
+__pycache__/
+
+# Credentials and secrets — NEVER commit
+.env
+users.yaml
+cred
+
+# Internal docs (connection details, infrastructure, teaching notes)
+docs/
+configs/aws.yaml
+CLAUDE.md
+
+# Generated data — large, reproducible
+*.jsonl
+chunking_comparison_results.json
+manifest.csv
+caches/
+indices/
+
+# Notebooks (scratch work)
+notebooks/
+sketchpaper.ipynb
+
+# One-off scripts
+fix_source_metadata.py
+hash_password.py
+
+# Eval sets + corpus files (large, reproducible)
+eval/
+eval_set_files/
+
+# Teaching preference docs (personal)
+prompts/
+
+# OS junk
+.DS_Store
