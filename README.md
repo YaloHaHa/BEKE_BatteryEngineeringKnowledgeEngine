@@ -31,7 +31,7 @@ enrichment       (Anthropic-style contextual retrieval, cached)
 Embedding        BGE-base-en-v1.5 → 768-dim vector per chunk
     │
     ▼
-Storage          upsert to Aurora pgvector (collection "beke_contextual", 84K chunks)
+Storage          upsert to Aurora pgvector
 ```
 
 ### Query pipeline (per request, served by `app.py`)
