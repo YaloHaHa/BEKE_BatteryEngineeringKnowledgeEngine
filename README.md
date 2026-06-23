@@ -2,7 +2,7 @@
 
 A production RAG system for semantic search over a multi-modal PhD research corpus (1,200 Word, PowerPoint, and PDF documents). Ask a natural-language question about aluminum-air batteries and micro-quadrotor drones — get a grounded answer with source citations and one-click file downloads.
 
-[BEKE Demo](static/website_demo.png)
+![BEKE Demo](static/website_demo.png)
 
 **Live demo:** [http://184.72.59.84:8501](http://184.72.59.84:8501) — log in or browse as a guest (3 queries/day).
 
